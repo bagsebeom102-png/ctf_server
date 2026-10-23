@@ -476,6 +476,76 @@ def admin():
     )
 
 
+@app.route("/admin/user/<int:user_id>/password", methods=["POST"])
+def admin_change_password(user_id):
+    admin_user = current_user()
+    if not admin_user:
+        return redirect(url_for("login"))
+    if not admin_user["is_admin"]:
+        return "관리자만 접근할 수 있습니다.", 403
+
+    new_password = request.form.get("new_password", "")
+    if len(new_password) < 6:
+        flash("비밀번호는 6자 이상이어야 합니다.", "error")
+        return redirect(url_for("admin"))
+
+    conn = get_db()
+    target = conn.execute("SELECT id, is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not target or target["is_admin"]:
+        conn.close()
+        flash("해당 사용자를 찾을 수 없거나 변경할 수 없습니다.", "error")
+        return redirect(url_for("admin"))
+    conn.execute("UPDATE users SET password_hash = ? WHERE id = ?",
+                 (generate_password_hash(new_password), user_id))
+    conn.commit()
+    conn.close()
+    flash("사용자 비밀번호를 변경했습니다.", "success")
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/user/<int:user_id>/reset-solves", methods=["POST"])
+def admin_reset_solves(user_id):
+    admin_user = current_user()
+    if not admin_user:
+        return redirect(url_for("login"))
+    if not admin_user["is_admin"]:
+        return "관리자만 접근할 수 있습니다.", 403
+
+    conn = get_db()
+    target = conn.execute("SELECT id, is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not target or target["is_admin"]:
+        conn.close()
+        flash("해당 사용자를 찾을 수 없거나 변경할 수 없습니다.", "error")
+        return redirect(url_for("admin"))
+    conn.execute("DELETE FROM solves WHERE user_id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+    flash("사용자의 모든 풀이 기록을 초기화했습니다.", "success")
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/user/<int:user_id>/delete", methods=["POST"])
+def admin_delete_user(user_id):
+    admin_user = current_user()
+    if not admin_user:
+        return redirect(url_for("login"))
+    if not admin_user["is_admin"]:
+        return "관리자만 접근할 수 있습니다.", 403
+
+    conn = get_db()
+    target = conn.execute("SELECT id, is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not target or target["is_admin"]:
+        conn.close()
+        flash("해당 사용자를 찾을 수 없거나 삭제할 수 없습니다.", "error")
+        return redirect(url_for("admin"))
+    conn.execute("DELETE FROM solves WHERE user_id = ?", (user_id,))
+    conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+    flash("사용자 계정을 삭제했습니다.", "success")
+    return redirect(url_for("admin"))
+
+
 if __name__ == "__main__":
     init_main_db()
     init_sqli_db()
