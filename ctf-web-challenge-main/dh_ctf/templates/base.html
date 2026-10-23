@@ -13,6 +13,7 @@
         {% if current_user %}
             {% if current_user['is_admin'] %}
                 <a href="{{ url_for('admin') }}">관리자</a>
+                <a href="{{ url_for('dashboard') }}">문제</a>
             {% else %}
                 <a href="{{ url_for('dashboard') }}">문제</a>
             {% endif %}

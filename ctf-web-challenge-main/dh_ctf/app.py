@@ -35,7 +35,6 @@ User student may run the following commands on dh-ctf:
     (root) NOPASSWD: /usr/bin/cat /opt/ctf/root_flag.txt
 
 관리자 권한으로 허용된 명령을 이용해 `/opt/ctf/root_flag.txt`를 읽는다고 가정하세요.
-아래 다운로드 파일에는 가상 터미널 로그가 들어 있습니다.
 """,
         "flag": "DH{sudo_cat_privilege}",
         "file": "system1_terminal.txt",
@@ -303,9 +302,6 @@ def dashboard():
     user = current_user()
     if not user:
         return redirect(url_for("login"))
-    if user["is_admin"]:
-        return redirect(url_for("admin"))
-
     conn = get_db()
     solved_rows = conn.execute(
         "SELECT problem_id FROM solves WHERE user_id = ?", (user["id"],)
@@ -323,7 +319,7 @@ def dashboard():
 @app.route("/problem/<int:problem_id>")
 def problem(problem_id):
     user = current_user()
-    if not user or user["is_admin"]:
+    if not user:
         return redirect(url_for("login"))
 
     p = next((x for x in PROBLEMS if x["id"] == problem_id), None)
@@ -343,7 +339,7 @@ def problem(problem_id):
 @app.route("/system-terminal/<int:problem_id>")
 def system_terminal(problem_id):
     user = current_user()
-    if not user or user["is_admin"]:
+    if not user:
         return redirect(url_for("login"))
     p = next((x for x in PROBLEMS if x["id"] == problem_id and x["category"] == "system"), None)
     if not p:
@@ -354,7 +350,7 @@ def system_terminal(problem_id):
 @app.route("/submit/<int:problem_id>", methods=["POST"])
 def submit(problem_id):
     user = current_user()
-    if not user or user["is_admin"]:
+    if not user:
         return redirect(url_for("login"))
 
     p = next((x for x in PROBLEMS if x["id"] == problem_id), None)
@@ -397,7 +393,7 @@ def challenge_file(filename):
 @app.route("/cookie-challenge")
 def cookie_challenge():
     user = current_user()
-    if not user or user["is_admin"]:
+    if not user:
         return redirect(url_for("login"))
 
     role = request.cookies.get("role", "user")
@@ -412,7 +408,7 @@ def cookie_challenge():
 @app.route("/sqli-challenge", methods=["GET", "POST"])
 def sqli_challenge():
     user = current_user()
-    if not user or user["is_admin"]:
+    if not user:
         return redirect(url_for("login"))
 
     result = None

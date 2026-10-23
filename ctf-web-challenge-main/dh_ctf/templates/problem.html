@@ -13,9 +13,9 @@
     </div>
 
     <h1>{{ p.title }}</h1>
-    <div class="description">{{ p.description | e | replace('\n', '<br>') | safe }}</div>
+    <div class="description">{{ p.description | e }}</div>
 
-    {% if p.get('file') %}
+    {% if p.get('file') and p.category != 'system' %}
         <p><a class="btn secondary" href="{{ url_for('challenge_file', filename=p.file) }}">문제 파일 다운로드</a></p>
     {% endif %}
 

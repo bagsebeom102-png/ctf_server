@@ -180,6 +180,7 @@ input:focus { border-color: var(--accent); }
     color: #cbd6ea;
     line-height: 1.75;
     margin: 24px 0;
+    white-space: pre-line;
 }
 
 .flag-form { margin-top: 30px; }

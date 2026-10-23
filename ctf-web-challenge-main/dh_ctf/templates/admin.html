@@ -20,8 +20,8 @@
         {% set ns = namespace(count=0) %}
         <tr>
             <td>
-                <strong>{{ u.username }}</strong><br>
-                <small>{{ u.created_at }}</small>
+                <strong>{{ u.username }}</strong>
+                <div><small>{{ u.created_at }}</small></div>
             </td>
             {% for p in problems %}
                 {% if (u.id, p.id) in solve_map %}
