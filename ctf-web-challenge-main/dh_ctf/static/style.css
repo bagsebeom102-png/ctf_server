@@ -1,0 +1,243 @@
+:root {
+    --bg: #0b1020;
+    --panel: #121a2e;
+    --panel2: #18223a;
+    --text: #eef3ff;
+    --muted: #9cabc7;
+    --accent: #62d0ff;
+    --good: #59e391;
+    --bad: #ff6b7a;
+    --border: #263552;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial, "Noto Sans KR", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+a { color: var(--accent); text-decoration: none; }
+
+.topbar {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5vw;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10, 16, 31, .96);
+}
+
+.logo {
+    color: white;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+nav {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+.user { color: var(--muted); }
+
+.container {
+    width: min(1100px, 92%);
+    margin: 42px auto;
+}
+
+.hero {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: clamp(56px, 9vw, 110px);
+    margin: 0;
+    letter-spacing: 4px;
+}
+
+.hero p { color: var(--muted); font-size: 20px; }
+
+.actions { display: flex; gap: 12px; margin-top: 20px; }
+
+.btn {
+    border: 0;
+    background: var(--accent);
+    color: #07101c;
+    font-weight: 800;
+    padding: 12px 18px;
+    border-radius: 9px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.btn.secondary {
+    background: var(--panel2);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.auth-card, .challenge-box, .problem-detail {
+    max-width: 720px;
+    margin: 40px auto;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+}
+
+form { display: grid; gap: 10px; }
+
+input {
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #0b1324;
+    color: white;
+    outline: none;
+}
+
+input:focus { border-color: var(--accent); }
+
+.flash {
+    margin: 12px 0;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: var(--panel2);
+}
+
+.flash.success { border-left: 4px solid var(--good); }
+.flash.error { border-left: 4px solid var(--bad); }
+
+.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 22px 0 35px;
+}
+
+.tabs a {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    border-radius: 999px;
+}
+
+.category { margin: 40px 0; }
+
+.problem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 15px;
+}
+
+.problem-card {
+    display: block;
+    color: var(--text);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    transition: .15s;
+}
+
+.problem-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+}
+
+.problem-card.solved { border-color: var(--good); }
+
+.badge {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 5px 8px;
+    border-radius: 999px;
+}
+
+.done { color: var(--good); font-weight: 800; float: right; }
+.done.big { font-size: 16px; }
+
+.problem-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.description {
+    color: #cbd6ea;
+    line-height: 1.75;
+    margin: 24px 0;
+}
+
+.flag-form { margin-top: 30px; }
+.inline { display: flex; gap: 10px; }
+
+.muted { color: var(--muted); }
+
+code {
+    background: #080d18;
+    padding: 3px 6px;
+    border-radius: 5px;
+}
+
+.flag-output, .result {
+    margin-top: 20px;
+    padding: 16px;
+    background: #071a12;
+    border: 1px solid var(--good);
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 18px;
+}
+
+.table-wrap { overflow-x: auto; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+    background: var(--panel);
+}
+
+th, td {
+    border: 1px solid var(--border);
+    padding: 10px;
+    text-align: center;
+}
+
+th { background: var(--panel2); }
+td.ok { color: var(--good); font-weight: 900; }
+td.no { color: #586681; }
+td:first-child { text-align: left; }
+
+.legend {
+    display: grid;
+    gap: 8px;
+    color: var(--muted);
+}
+
+@media (max-width: 600px) {
+    .topbar { padding: 0 16px; }
+    nav { gap: 10px; font-size: 14px; }
+    .inline { flex-direction: column; }
+}
+
+
+/* Linux-like isolated CTF terminal */
+.linux-shell{max-width:1000px;margin:28px auto;background:#080b10;border:1px solid #343b46;border-radius:10px;overflow:hidden;box-shadow:0 18px 55px #0008;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#e6edf3}
+.linux-titlebar{height:44px;background:#20242c;display:flex;align-items:center;justify-content:center;position:relative;color:#d7dce4;font-size:13px;border-bottom:1px solid #343b46}
+.linux-titlebar>span:last-child{position:absolute;right:14px;color:#8b949e}.window-dots{position:absolute;left:14px;display:flex;gap:7px}.window-dots i{width:11px;height:11px;border-radius:50%;background:#ff5f57}.window-dots i:nth-child(2){background:#febc2e}.window-dots i:nth-child(3){background:#28c840}
+.linux-meta{padding:9px 16px;color:#8b949e;background:#0d1117;font-size:12px;border-bottom:1px solid #252b33}.linux-output{height:min(54vh,560px);min-height:320px;overflow:auto;padding:18px 18px 8px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.65}.linux-line{min-height:1.4em}.linux-command{color:#7ee787}.linux-muted{color:#8b949e;margin-top:8px}.linux-inputline{display:flex;align-items:center;gap:10px;padding:10px 16px 17px}.linux-inputline label{color:#7ee787;white-space:nowrap;font-size:14px}.linux-inputline input{font-family:inherit;background:transparent;border:0;border-radius:0;padding:4px 0;color:#f0f6fc;box-shadow:none;font-size:14px}.linux-inputline input:focus{border:0;outline:0}.linux-inputline input:focus-visible{outline:0}

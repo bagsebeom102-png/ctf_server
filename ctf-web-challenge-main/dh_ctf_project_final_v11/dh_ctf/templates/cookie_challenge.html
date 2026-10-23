@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Cookie Challenge - DH CTF{% endblock %}
+{% block content %}
+<a href="{{ url_for('problem', problem_id=5) }}">← 문제로 돌아가기</a>
+<article class="problem-detail">
+    <span class="badge">WEB</span>
+    <h1>Cookie Challenge</h1>
+    <p>현재 인증 상태: <strong>{{ role }}</strong></p>
+    {% if flag %}
+        <div class="answer-box"><strong>{{ flag }}</strong></div>
+    {% else %}
+        <p class="muted">현재 상태로는 flag가 표시되지 않습니다.</p>
+    {% endif %}
+</article>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}가상 터미널 - DH CTF{% endblock %}
+{% block content %}
+<a href="{{ url_for('problem', problem_id=problem_id) }}">← 문제로 돌아가기</a>
+<article class="problem-detail">
+    <span class="badge">SYSTEM</span>
+    <h1>가상 터미널</h1>
+    <p class="muted">실제 서버 명령은 실행되지 않는 교육용 가상 터미널입니다.</p>
+    <div id="terminal" class="terminal">
+        <div id="terminal-output"></div>
+        <form id="terminal-form" class="terminal-line">
+            <span id="terminal-prompt"></span>
+            <input id="terminal-input" type="text" autocomplete="off" spellcheck="false" autofocus>
+        </form>
+    </div>
+</article>
+<script>
+(() => {
+    const problemId = {{ problem_id|int }};
+    let cwd = {{ cwd|tojson }};
+    const form = document.getElementById("terminal-form");
+    const input = document.getElementById("terminal-input");
+    const output = document.getElementById("terminal-output");
+    const prompt = document.getElementById("terminal-prompt");
+
+    function updatePrompt() {
+        prompt.textContent = "ctf@dh-ctf:" + cwd + "$";
+    }
+    function printLine(text) {
+        const line=document.createElement("div");
+        line.className="terminal-output-line";
+        line.textContent=text;
+        output.appendChild(line);
+        line.scrollIntoView({block:"nearest"});
+    }
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const command=input.value;
+        if(!command.trim()) return;
+        printLine(prompt.textContent+" "+command);
+        input.value="";
+        try {
+            const response=await fetch("/system-terminal/"+problemId+"/command", {
+                method:"POST",
+                headers:{"Content-Type":"application/json","Accept":"application/json"},
+                credentials:"same-origin",
+                body:JSON.stringify({command:command,cwd:cwd})
+            });
+            const text=await response.text();
+            let data;
+            try { data=JSON.parse(text); }
+            catch (_) {
+                throw new Error("HTTP " + response.status + " (서버에서 HTML 오류 페이지를 반환했습니다)");
+            }
+            if(!response.ok) {
+                throw new Error(data.output || "HTTP "+response.status);
+            }
+            cwd=data.cwd || cwd;
+            updatePrompt();
+            if(data.output) printLine(data.output);
+        } catch(err) {
+            printLine("터미널 연결 오류: "+err.message);
+        }
+        input.focus();
+    });
+
+    document.getElementById("terminal").addEventListener("click",()=>input.focus());
+    updatePrompt();
+    input.focus();
+})();
+</script>
+{% endblock %}

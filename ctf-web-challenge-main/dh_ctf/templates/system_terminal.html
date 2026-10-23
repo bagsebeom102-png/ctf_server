@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Linux Terminal - DH CTF{% endblock %}
+{% block content %}
+<a href="{{ url_for('problem', problem_id=problem_id) }}">← 문제로 돌아가기</a>
+<section class="linux-shell">
+  <header class="linux-titlebar"><span class="window-dots"><i></i><i></i><i></i></span><strong>student@dh-ctf: ~</strong><span>bash</span></header>
+  <div class="linux-meta">Ubuntu 22.04 LTS · 교육용 격리 시뮬레이터</div>
+  <div id="terminal-output" class="linux-output"><div>DH-CTF Linux environment (simulated)</div><div>명령어 목록은 <b>help</b> 를 입력하세요.</div><div class="linux-muted">실제 호스트 명령이나 파일에는 접근하지 않습니다.</div></div>
+  <form id="terminal-form" class="linux-inputline"><label id="prompt">student@dh-ctf:~$</label><input id="terminal-input" autocomplete="off" spellcheck="false" autofocus aria-label="Linux command"></form>
+</section>
+<script>
+(() => {
+ const out=document.getElementById('terminal-output'), form=document.getElementById('terminal-form'), input=document.getElementById('terminal-input'), prompt=document.getElementById('prompt');
+ let cwd='/home/student'; const dirs={'/':['bin','etc','home','opt','tmp','usr'],'/home':['student'],'/home/student':['notes.txt','readme.txt','tools'],'/home/student/tools':['check.sh'],'/etc':['hostname','passwd','os-release'],'/opt':['ctf'],'/opt/ctf':['root_flag.txt','backup.txt'],'/tmp':[],'/usr':['bin','share'],'/usr/bin':['cat','id','ls','whoami']};
+ const contents={'/home/student/readme.txt':'DH-CTF Linux practice machine. Start with ls -la, id, and sudo -l.','/home/student/notes.txt':'메모: 권한과 소유자를 확인하고, 허용된 명령어를 분석하세요.','/etc/hostname':'dh-ctf','/etc/os-release':'NAME="Ubuntu"\nVERSION="22.04 LTS (Jammy Jellyfish)"','/etc/passwd':'root:x:0:0:root:/root:/bin/bash\nstudent:x:1000:1000:Student:/home/student:/bin/bash','/home/student/tools/check.sh':'#!/bin/sh\necho "check complete"','/opt/ctf/backup.txt':'백업 파일: root_flag.txt 파일 권한을 확인하세요.','/opt/ctf/root_flag.txt':'Permission denied: simulated root-only file.'};
+ const norm=(x)=>{if(x.startsWith('/')){}else x=cwd+'/'+x;let a=[];for(const q of x.split('/')){if(!q||q==='.')continue;if(q==='..')a.pop();else a.push(q)}return '/'+a.join('/')};
+ function line(t,cls=''){let d=document.createElement('div');d.className='linux-line '+cls;d.textContent=t;out.appendChild(d);out.scrollTop=out.scrollHeight;}
+ function ls(path,all){let p=norm(path||'.');let names=dirs[p];if(!names)return `ls: cannot access '${path}': No such file or directory`;let ns=all?['.','..',...names]:names;return ns.map(n=>all?((n==='.'||n==='..')?'drwxr-xr-x':(dirs[norm(p+'/'+n)]?'drwxr-xr-x':'-rw-r--r--'))+' student student 4096 Oct 23 17:20 '+n:n).join('\n')||'';}
+ function run(raw){let a=raw.trim().split(/\s+/),c=a[0],args=a.slice(1);if(!c)return '';if(c==='help')return '지원 명령어: help, pwd, ls [-la] [경로], cd [경로], whoami, id, uname [-a], cat <파일>, file <파일>, sudo -l, clear, echo <문장>, exit';if(c==='clear'){out.innerHTML='';return ''}if(c==='pwd')return cwd;if(c==='whoami')return 'student';if(c==='id')return 'uid=1000(student) gid=1000(student) groups=1000(student),27(sudo-lab)';if(c==='uname')return args.includes('-a')?'Linux dh-ctf 5.15.0-educational #1 SMP x86_64 GNU/Linux':'Linux';if(c==='echo')return args.join(' ');if(c==='ls')return ls(args.filter(x=>!x.startsWith('-')).pop()||'.',args.some(x=>x.includes('a')||x.includes('l')));if(c==='cd'){let n=norm(args[0]||'/home/student');if(!dirs[n])return `bash: cd: ${args[0]||''}: No such file or directory`;cwd=n;prompt.textContent=`student@dh-ctf:${cwd==='/'?'/':cwd.replace('/home/student','~')}$`;return ''}if(c==='cat'||c==='file'){let f=norm(args[0]||'');if(!args[0])return `${c}: missing operand`;if(c==='file')return `${args[0]}: ${contents[f]?'ASCII text':'cannot open (simulated)'}`;if(f==='/opt/ctf/root_flag.txt')return 'cat: /opt/ctf/root_flag.txt: Permission denied';return contents[f]??(dirs[f]?`cat: ${args[0]}: Is a directory`:`cat: ${args[0]}: No such file or directory`)}if(c==='sudo'&&args[0]==='-l')return 'Matching Defaults entries for student on dh-ctf:\n    env_reset, mail_badpass\nUser student may run the following commands on dh-ctf:\n    (root) NOPASSWD: /usr/bin/cat /opt/ctf/root_flag.txt\n\n교육용 시뮬레이션: sudo 권한 규칙을 분석하고 문제 페이지에 Flag를 제출하세요.';if(c==='exit')return '가상 터미널을 종료하려면 문제 목록으로 돌아가세요.';return `bash: ${c}: command not found (가상 터미널)`;}
+ form.addEventListener('submit',e=>{e.preventDefault();let raw=input.value;line(prompt.textContent+' '+raw,'linux-command');input.value='';let result=run(raw);if(result)result.split('\n').forEach(x=>line(x));});
+})();
+</script>
+{% endblock %}

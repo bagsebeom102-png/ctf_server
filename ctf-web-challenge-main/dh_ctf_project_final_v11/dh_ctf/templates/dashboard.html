@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}문제 - DH CTF{% endblock %}
+{% block content %}
+<h1>CTF 문제</h1>
+<p class="muted">Flag 형식: <code>DH{...}</code></p>
+
+<div class="tabs">
+    {% for key, name in category_names.items() %}
+        <a href="#{{ key }}">{{ name }}</a>
+    {% endfor %}
+</div>
+
+{% for key, problems in grouped.items() %}
+<section id="{{ key }}" class="category">
+    <h2>{{ category_names[key] }}</h2>
+    <div class="problem-grid">
+        {% for p in problems %}
+        <a class="problem-card {% if p.id in solved %}solved{% endif %}"
+           href="{{ url_for('problem', problem_id=p.id) }}">
+            <div>
+                <span class="badge">{{ p.points }} pts</span>
+                {% if p.id in solved %}<span class="done">✓ SOLVED</span>{% endif %}
+            </div>
+            <h3>{{ p.title }}</h3>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}회원가입 - DH CTF{% endblock %}
+{% block content %}
+<div class="auth-card">
+    <h2>회원가입</h2>
+    <form method="post">
+        <label>아이디</label>
+        <input name="username" required minlength="3" maxlength="20">
+
+        <label>비밀번호</label>
+        <input name="password" type="password" required minlength="6">
+
+        <button class="btn" type="submit">회원가입</button>
+    </form>
+</div>
+{% endblock %}

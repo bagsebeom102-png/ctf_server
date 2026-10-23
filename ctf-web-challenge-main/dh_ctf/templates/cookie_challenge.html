@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Cookie Challenge{% endblock %}
+{% block content %}
+<div class="challenge-box">
+    <h1>Cookie Challenge</h1>
+    <p>현재 권한: <code>{{ role }}</code></p>
+    {% if flag %}
+        <div class="flag-output">{{ flag }}</div>
+    {% else %}
+        <p>관리자만 flag를 볼 수 있습니다.</p>
+        <p class="muted">Hint: 개발자 도구 → Application/Storage → Cookies</p>
+    {% endif %}
+</div>
+{% endblock %}

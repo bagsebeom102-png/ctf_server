@@ -1,0 +1,11 @@
+DH CTF - File Permission Challenge
+
+student@dh-ctf:/opt/ctf$ ls -l
+
+-rw------- 1 root root  28 Sep  2 10:00 private.txt
+-rw-r----- 1 root root  31 Sep  2 10:00 backup.txt
+-rw-r--r-- 1 root root  28 Sep  2 10:00 public_note.txt
+-rw-r--r-- 1 root root  28 Sep  2 10:00 .flag_backup
+
+student@dh-ctf:/opt/ctf$ cat .flag_backup
+DH{file_permission_mistake}

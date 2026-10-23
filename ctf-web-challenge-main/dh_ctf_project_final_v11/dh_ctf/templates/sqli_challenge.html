@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}SQL Injection Challenge{% endblock %}
+{% block content %}
+<div class="challenge-box">
+    <h1>SQL Injection Login</h1>
+    <p class="muted">연습용 DB에만 연결된 교육용 문제입니다.</p>
+
+    <form method="post">
+        <label>ID</label>
+        <input name="username" autocomplete="off">
+        <label>Password</label>
+        <input name="password" autocomplete="off">
+        <button class="btn" type="submit">Login</button>
+    </form>
+
+    {% if result %}
+        <div class="result">{{ result }}</div>
+    {% endif %}
+    {% if error %}
+        <div class="flash error">{{ error }}</div>
+    {% endif %}
+</div>
+{% endblock %}

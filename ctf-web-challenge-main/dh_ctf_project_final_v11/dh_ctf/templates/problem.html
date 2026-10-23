@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ p.title }} - DH CTF{% endblock %}
+{% block content %}
+<a href="{{ url_for('dashboard') }}">← 문제 목록</a>
+
+<article class="problem-detail">
+    <div class="problem-header">
+        <div>
+            <span class="badge">{{ category_names[p.category] }}</span>
+            <span class="badge">{{ p.points }} pts</span>
+        </div>
+        {% if solved %}<span class="done big">✓ SOLVED</span>{% endif %}
+    </div>
+
+    <h1>{{ p.title }}</h1>
+    <div class="description">{{ p.description }}</div>
+
+    {% if p.get('file') and p.category != 'system' %}
+        <p>
+            {% if p.category == 'system' %}
+                <a class="btn secondary" href="{{ url_for('system_terminal', problem_id=p.id) }}">터미널 열기</a>
+            {% endif %}
+        </p>
+    {% endif %}
+
+    {% if p.category == 'system' %}
+        <p><a class="btn secondary" href="{{ url_for('system_terminal', problem_id=p.id) }}">터미널 열기</a></p>
+    {% endif %}
+
+    {% if p.get('route') %}
+        <p><a class="btn secondary" target="_blank" href="{{ url_for(p.route) }}">문제 열기</a></p>
+    {% endif %}
+
+    <form class="flag-form" method="post" action="{{ url_for('submit', problem_id=p.id) }}">
+        <label>Flag 제출</label>
+        <div class="inline">
+            <input name="flag" placeholder="DH{...}" required>
+            <button class="btn" type="submit">제출</button>
+        </div>
+    </form>
+</article>
+{% endblock %}

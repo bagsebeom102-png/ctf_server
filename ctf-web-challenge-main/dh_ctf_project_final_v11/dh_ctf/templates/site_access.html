@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}사이트 입장 - DH CTF{% endblock %}
+{% block content %}
+<section class="auth-card">
+    <h1>DH CTF</h1>
+    <p>사이트에 입장하려면 접속 비밀번호를 입력하세요.</p>
+    <p class="muted">이 비밀번호는 CTF 계정 비밀번호와 다릅니다.</p>
+    <form method="post" class="auth-form">
+        <label for="password">사이트 접속 비밀번호</label>
+        <input id="password" name="password" type="password"
+               placeholder="접속 비밀번호 입력" autocomplete="off" required autofocus>
+        <button type="submit">사이트 입장</button>
+    </form>
+</section>
+{% endblock %}

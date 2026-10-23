@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}관리자 현황 - DH CTF{% endblock %}
+{% block content %}
+<div class="admin-head">
+    <div>
+        <span class="badge">ADMIN</span>
+        <h1>대회 현황 / 사용자 관리</h1>
+        <p class="muted">풀이 현황, 사용자 IP, 문제 정답 및 참가자 계정을 관리합니다.</p>
+    </div>
+    <button class="btn secondary" onclick="location.reload()">↻ 새로고침</button>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card"><span>참가자</span><strong>{{ users|length }}</strong></div>
+    <div class="stat-card"><span>전체 문제</span><strong>{{ problems|length }}</strong></div>
+    <div class="stat-card"><span>전체 풀이</span><strong>{{ solve_map|length }}</strong></div>
+    <div class="stat-card"><span>전체 배점</span><strong>{{ problems|sum(attribute='points') }}</strong></div>
+</div>
+
+<section class="admin-section">
+    <div class="section-title"><h2>사용자 관리</h2></div>
+    {% if users %}
+    <div class="table-wrap">
+    <table class="admin-table">
+        <thead><tr>
+            <th>참가자</th><th>IP 주소</th><th>가입일</th><th>비밀번호 변경</th><th>추방</th>
+        </tr></thead>
+        <tbody>
+        {% for u in users %}
+        <tr>
+            <td><strong>{{ u.username }}</strong></td>
+            <td><code>{{ u.ip_address or 'unknown' }}</code></td>
+            <td>{{ u.created_at.replace('T', ' ') }}</td>
+            <td>
+                <form method="post" action="{{ url_for('admin_reset_password', user_id=u.id) }}" class="inline-admin-form">
+                    <input type="password" name="new_password" minlength="6" placeholder="새 비밀번호" required>
+                    <button class="btn small" type="submit">변경</button>
+                </form>
+            </td>
+            <td>
+                <form method="post" action="{{ url_for('admin_kick_user', user_id=u.id) }}" onsubmit="return confirm('{{ u.username }} 사용자를 추방할까요?');">
+                    <button class="btn danger small" type="submit">추방</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}<div class="empty">아직 가입한 참가자가 없습니다.</div>{% endif %}
+    <p class="muted">※ 보안을 위해 참가자의 원래 비밀번호를 평문으로 보거나 저장하지 않고, 관리자만 새 비밀번호로 재설정할 수 있습니다.</p>
+</section>
+
+<section class="admin-section">
+    <div class="section-title"><h2>참가자 풀이 현황</h2></div>
+    {% if users %}
+    <div class="table-wrap admin-table-wrap">
+    <table class="admin-table">
+        <thead><tr>
+            <th class="sticky-user">참가자</th>
+            {% for p in problems %}<th title="{{ p.title }}"><span>#{{ p.id }}</span><small>{{ p.points }}P</small></th>{% endfor %}
+            <th>풀이</th><th>점수</th>
+        </tr></thead>
+        <tbody>
+        {% for u in users %}
+            {% set ns = namespace(count=0, score=0) %}
+            <tr>
+                <td class="sticky-user user-cell"><strong>{{ u.username }}</strong><small>{{ u.ip_address or 'unknown' }}</small></td>
+                {% for p in problems %}
+                    {% if (u.id, p.id) in solve_map %}
+                        {% set ns.count = ns.count + 1 %}{% set ns.score = ns.score + p.points %}
+                        <td class="solved-cell" title="풀이 시간: {{ solve_map[(u.id, p.id)] }}"><span class="check">✓</span><small>{{ solve_map[(u.id, p.id)].replace('T', ' ') }}</small></td>
+                    {% else %}<td class="unsolved-cell">—</td>{% endif %}
+                {% endfor %}
+                <td><strong>{{ ns.count }}/{{ problems|length }}</strong></td>
+                <td><strong class="score">{{ ns.score }}</strong></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table></div>
+    {% else %}<div class="empty">아직 가입한 참가자가 없습니다.</div>{% endif %}
+</section>
+
+<section class="admin-section">
+    <div class="section-title"><h2>문제 정답</h2><span class="muted">관리자에게만 표시됩니다.</span></div>
+    <div class="problem-status-grid">
+    {% for p in problems %}
+        <div class="mini-card">
+            <div class="mini-top"><span class="badge">#{{ p.id }}</span><span>{{ p.points }}P</span></div>
+            <h3>{{ p.title }}</h3>
+            <p class="muted">{{ category_names[p.category] }}</p>
+            <div class="answer-box"><code>{{ p.flag }}</code></div>
+        </div>
+    {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}DH CTF{% endblock %}
+{% block content %}
+<section class="hero">
+    <h1>DH CTF</h1>
+    <p>시스템 해킹 · 리버싱 · 웹 해킹 · 암호학</p>
+    <div class="actions">
+        <a class="btn" href="{{ url_for('login') }}">로그인</a>
+        <a class="btn secondary" href="{{ url_for('register') }}">회원가입</a>
+    </div>
+</section>
+{% endblock %}

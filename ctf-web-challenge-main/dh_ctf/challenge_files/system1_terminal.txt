@@ -1,0 +1,12 @@
+DH CTF - Virtual Linux Terminal
+
+student@dh-ctf:~$ sudo -l
+
+Matching Defaults entries for student on dh-ctf:
+    env_reset, mail_badpass
+
+User student may run the following commands on dh-ctf:
+    (root) NOPASSWD: /usr/bin/cat /opt/ctf/root_flag.txt
+
+student@dh-ctf:~$ sudo /usr/bin/cat /opt/ctf/root_flag.txt
+DH{sudo_cat_privilege}
